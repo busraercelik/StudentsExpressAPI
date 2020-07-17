@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Students</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="date"></div>
+    <h1>Student's list</h1>
+    <form id="addStudentForm" action="/students" method="POST">
+        <input type="text" name="name" placeholder="enter name..">
+        <input type="text" name="rollno" placeholder="enter rollno..">
+        <input type="text" name="address" placeholder="enter address..">
+        <button type="submit">Add student using form submit!</button>
+    </form>
+    <br>
+    <button onclick="addStudent()">Add a new student using AJAX!</button>
+    <br>
+    <br>
+    <table id="studentsTable" style="border: 1px solid black;">
+    </table>
+    <script>
+        // call the method as soon as the page loads to show inital students
+        getAllStudent();
+
+        function getAllStudent() {
+            //clear all the existing rows in the tablew
+            $('#studentsTable').html("");
+            $.get("/students", function (data) {
+                data.forEach(element => {
+                    // add students dynamically 
+                    $('#studentsTable').append('<tr><td>' + element.name + '</td>' +
+                        '<td>' + element.rollno + '</td>' +
+                        '<td>' + element.address + '</td></tr>');
+                });
+            });
+        }
+
+        function addStudent() {
+            //fetch data from form to use it in the POST api
+            // add the student
+            $.post("/students", $("#addStudentForm").serialize()).done(function (response) {
+                //when the call is done, refresh the table to show the new data
+                console.log(response);
+                getAllStudent();
+                $("#addStudentForm").trigger("reset");
+            });
+        }
+
+
+        // show the time to make sure that page is not refreshing
+        // after you add a new student.
+        n = new Date();
+        y = n.getFullYear();
+        m = n.getMonth() + 1;
+        d = n.getDate();
+        h = n.getHours();
+        mm = n.getMinutes();
+        s = n.getSeconds();
+        document.getElementById("date").innerHTML = m + "/" + d + "/" + y+" "+ h+":"+mm+":"+s;
+    </script>
+</body>
+
+</html>
